@@ -6,6 +6,7 @@
       <button @click="handleLogout">Выйти</button>
     </div>
     <WorkTimer />
+    <ActivityTracker />
   </div>
 </template>
 
@@ -14,6 +15,7 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import WorkTimer from '@/components/WorkTimer.vue'
+import ActivityTracker from '@/components/ActivityTracker.vue'
 
 const store = useStore()
 const router = useRouter()
