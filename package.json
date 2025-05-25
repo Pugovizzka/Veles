@@ -1,0 +1,13 @@
+{
+  "name": "employee-time-tracking",
+  "version": "1.0.0",
+  "description": "Employee time tracking application",
+  "scripts": {
+    "dev": "cd frontend && npm run serve",
+    "install-deps": "cd frontend && npm install"
+  },
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ]
+}
