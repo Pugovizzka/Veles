@@ -3,6 +3,7 @@ import store from '../store'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import EmployeesView from '../views/EmployeesView.vue'
 
 const routes = [
   {
@@ -20,6 +21,15 @@ const routes = [
     name: 'dashboard',
     component: DashboardView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/employees',
+    name: 'employees',
+    component: EmployeesView,
+    meta: { 
+      requiresAuth: true,
+      requiresRole: ['admin', 'manager']
+    }
   }
 ]
 
@@ -34,9 +44,18 @@ router.beforeEach(async (to, from, next) => {
     
     if (!isAuthenticated) {
       next('/login')
-    } else {
-      next()
+      return
     }
+
+    if (to.meta.requiresRole) {
+      const userRole = store.getters['auth/userRole']
+      if (!to.meta.requiresRole.includes(userRole)) {
+        next('/dashboard')
+        return
+      }
+    }
+    
+    next()
   } else {
     next()
   }
