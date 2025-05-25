@@ -1,12 +1,28 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+import enum
 
 Base = declarative_base()
+
+class UserRole(enum.Enum):
+    ADMIN = "admin"
+    MANAGER = "manager"
+    EMPLOYEE = "employee"
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, nullable=False)
+    name = Column(String, nullable=False)
+    role = Column(Enum(UserRole), nullable=False, default=UserRole.EMPLOYEE)
+    department = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 class Employee(Base):
     __tablename__ = "employees"
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String, nullable=False)
     department = Column(String)
 
