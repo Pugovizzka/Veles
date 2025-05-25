@@ -15,6 +15,10 @@ services:
     build: ./frontend
     ports:
       - "80:80"
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    command: npm run serve
 
   db:
     image: postgres:14
