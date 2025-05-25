@@ -1,10 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.VUE_APP_SUPABASE_URL,
-  process.env.VUE_APP_SUPABASE_ANON_KEY
-)
-
 export default {
   namespaced: true,
   
@@ -30,24 +23,12 @@ export default {
     async login({ commit }, { email, password }) {
       commit('SET_LOADING', true)
       try {
-        const { data: { user }, error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        })
-        
-        if (error) throw error
-        
-        // Получаем роль пользователя
-        const { data: userData, error: roleError } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', user.id)
-          .single()
-        
-        if (roleError) throw roleError
+        // TODO: Implement actual authentication with your backend
+        const user = { email, id: 1 }
+        const role = 'employee'
         
         commit('SET_USER', user)
-        commit('SET_USER_ROLE', userData.role)
+        commit('SET_USER_ROLE', role)
         return user
       } finally {
         commit('SET_LOADING', false)
@@ -55,25 +36,16 @@ export default {
     },
 
     async logout({ commit }) {
-      await supabase.auth.signOut()
       commit('SET_USER', null)
       commit('SET_USER_ROLE', null)
     },
 
     async checkAuth({ commit }) {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        const { data: userData } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', session.user.id)
-          .single()
-        
-        commit('SET_USER', session.user)
-        commit('SET_USER_ROLE', userData?.role)
-      } else {
-        commit('SET_USER', null)
-        commit('SET_USER_ROLE', null)
+      // TODO: Implement session check with your backend
+      const user = localStorage.getItem('user')
+      if (user) {
+        commit('SET_USER', JSON.parse(user))
+        commit('SET_USER_ROLE', 'employee')
       }
     }
   },

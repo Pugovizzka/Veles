@@ -1,11 +1,14 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from typing import Optional
+from sqlalchemy.orm import Session
 import psutil
 import win32gui
 import win32process
 import win32con
+from database import get_db
+from models import ActivityLog, Employee
 
 app = FastAPI()
 
@@ -38,17 +41,40 @@ def get_active_window_info():
         }
 
 @app.get("/current-activity")
-async def get_current_activity():
+async def get_current_activity(db: Session = Depends(get_db)):
     activity = get_active_window_info()
+    
+    # Сохраняем активность в базу данных
+    if activity["app"] != "Unknown":
+        log = ActivityLog(
+            employee_id=1,  # Временно хардкодим ID сотрудника
+            window_title=activity["title"],
+            app_name=activity["app"],
+            start_time=datetime.utcnow()
+        )
+        db.add(log)
+        db.commit()
+    
     return activity
 
 @app.post("/stop")
-async def stop_day(request: Request):
+async def stop_day(request: Request, db: Session = Depends(get_db)):
     data = await request.json()
 
     try:
         start_time = datetime.fromisoformat(data["start_time"])
         end_time = datetime.fromisoformat(data["end_time"])
+        
+        # Закрываем последнюю активность
+        last_activity = db.query(ActivityLog)\
+            .filter(ActivityLog.employee_id == 1)\
+            .filter(ActivityLog.end_time.is_(None))\
+            .first()
+            
+        if last_activity:
+            last_activity.end_time = end_time
+            db.commit()
+            
     except Exception as e:
         return {"error": f"Неверный формат времени: {e}"}
 
