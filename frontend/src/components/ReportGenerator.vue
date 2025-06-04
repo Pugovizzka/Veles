@@ -1,4 +1,3 @@
-```vue
 <template>
   <div class="report-generator">
     <h2>Генерация отчета</h2>
@@ -103,7 +102,7 @@ const filters = reactive({
 const formatDuration = (minutes) => {
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
-  return \`${hours}ч ${mins}м`
+  return `${hours}ч ${mins}м`
 }
 
 const generateReport = async () => {
@@ -221,4 +220,3 @@ th {
   border-radius: 4px;
 }
 </style>
-```
