@@ -41,9 +41,19 @@
       </div>
     </div>
 
-    <button @click="generateReport" :disabled="loading" class="generate-btn">
-      {{ loading ? 'Формирование...' : 'Сформировать отчет' }}
-    </button>
+    <div class="buttons">
+      <button @click="generateReport" :disabled="loading" class="generate-btn">
+        {{ loading ? 'Формирование...' : 'Сформировать отчет' }}
+      </button>
+      
+      <button 
+        @click="downloadExcel" 
+        :disabled="!report || loading" 
+        class="download-btn"
+      >
+        Скачать Excel
+      </button>
+    </div>
 
     <div v-if="report" class="report-results">
       <h3>Результаты</h3>
@@ -119,6 +129,26 @@ const generateReport = async () => {
   }
 }
 
+const downloadExcel = async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/export-excel', {
+      params: filters,
+      responseType: 'blob'
+    })
+    
+    // Создаем ссылку для скачивания
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `report_${filters.startDate}_${filters.endDate}.xlsx`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+  } catch (error) {
+    console.error('Error downloading Excel:', error)
+  }
+}
+
 // Загрузка списка сотрудников при монтировании компонента
 const loadEmployees = async () => {
   try {
@@ -171,19 +201,32 @@ select {
   width: 100%;
 }
 
-.generate-btn {
-  width: 100%;
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.generate-btn, .download-btn {
+  flex: 1;
   padding: 12px;
-  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-bottom: 20px;
 }
 
-.generate-btn:disabled {
+.generate-btn {
+  background-color: #4CAF50;
+}
+
+.download-btn {
+  background-color: #2196F3;
+}
+
+.generate-btn:disabled, .download-btn:disabled {
   background-color: #cccccc;
+  cursor: not-allowed;
 }
 
 table {
