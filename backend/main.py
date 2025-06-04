@@ -4,9 +4,7 @@ from datetime import datetime
 from typing import Optional
 from sqlalchemy.orm import Session
 import psutil
-import win32gui
-import win32process
-import win32con
+import subprocess
 from database import get_db
 from models import ActivityLog, Employee
 
@@ -22,10 +20,14 @@ app.add_middleware(
 
 def get_active_window_info():
     try:
-        window = win32gui.GetForegroundWindow()
-        _, pid = win32process.GetWindowThreadProcessId(window)
-        app_name = psutil.Process(pid).name()
-        window_title = win32gui.GetWindowText(window)
+        # Using xdotool to get window information on Linux
+        active_window_id = subprocess.check_output(['xdotool', 'getactivewindow']).decode().strip()
+        window_title = subprocess.check_output(['xdotool', 'getwindowname', active_window_id]).decode().strip()
+        
+        # Get process info using psutil
+        pid = int(subprocess.check_output(['xdotool', 'getwindowpid', active_window_id]).decode().strip())
+        process = psutil.Process(pid)
+        app_name = process.name()
         
         return {
             "app": app_name,
