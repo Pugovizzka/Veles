@@ -1,3 +1,4 @@
+```vue
 <template>
   <div class="dashboard">
     <h1>Панель управления</h1>
@@ -7,6 +8,7 @@
     </div>
     <WorkTimer />
     <ActivityTracker />
+    <ReportGenerator />
   </div>
 </template>
 
@@ -16,6 +18,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import WorkTimer from '@/components/WorkTimer.vue'
 import ActivityTracker from '@/components/ActivityTracker.vue'
+import ReportGenerator from '@/components/ReportGenerator.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -56,3 +59,4 @@ button:hover {
   background-color: #cc0000;
 }
 </style>
+```
