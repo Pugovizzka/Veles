@@ -106,7 +106,7 @@ const toggleSidebar = () => {
 }
 
 .sidebar-collapsed {
-  width: 50px;
+  width: 35px;
 }
 
 .toggle-btn {
