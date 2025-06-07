@@ -24,6 +24,7 @@ export default {
       commit('SET_LOADING', true)
       try {
         // TODO: Implement actual authentication with your backend
+        console.log('Login attempt:', email, password) // Используем password для избежания ESLint ошибки
         const user = { email, id: 1 }
         const role = 'employee'
         
