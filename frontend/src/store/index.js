@@ -1,14 +1,19 @@
 import { createStore } from 'vuex'
+import auth from './modules/auth'
 
 export default createStore({
-  state: {
+  modules: {
+    auth
   },
-  getters: {
+  state: {
+    sidebarCollapsed: false
   },
   mutations: {
+    TOGGLE_SIDEBAR(state) {
+      state.sidebarCollapsed = !state.sidebarCollapsed
+    }
   },
-  actions: {
-  },
-  modules: {
+  getters: {
+    isSidebarCollapsed: state => state.sidebarCollapsed
   }
 })

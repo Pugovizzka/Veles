@@ -1,0 +1,17 @@
+{
+  "name": "employee-time-tracking",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && npm run serve",
+    "build": "cd frontend && npm run build",
+    "lint": "cd frontend && npm run lint"
+  },
+  "workspaces": [
+    "frontend"
+  ],
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "axios": "^1.8.4"
+  }
+}

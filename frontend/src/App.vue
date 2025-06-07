@@ -1,17 +1,12 @@
 <template>
   <div id="app">
-    <WorkTimer />
+    <router-view />
   </div>
 </template>
 
 <script>
-import WorkTimer from './components/WorkTimer.vue'
-
 export default {
-  name: 'App',
-  components: {
-    WorkTimer
-  }
+  name: 'App'
 }
 </script>
 
