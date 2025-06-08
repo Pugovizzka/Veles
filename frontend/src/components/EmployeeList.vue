@@ -1,7 +1,10 @@
 <template>
   <div class="employee-list-container">
     <div class="employee-list">
-      <h2>Список сотрудников</h2>
+      <div class="employee-header">
+        <h2>Список сотрудников</h2>
+        <button class="btn-add" @click="showCreateModal = true">+</button>
+      </div>
 
       <div class="filters">
         <select v-model="departmentFilter" class="filter-select">
@@ -40,6 +43,38 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Модальное окно создания сотрудника -->
+      <div v-if="showCreateModal" class="modal-overlay">
+        <div class="modal">
+          <h3>Создание пользователя</h3>
+          <label>ФИО</label>
+          <input v-model="form.name" type="text" />
+
+          <label>Email (логин)</label>
+          <input v-model="form.email" type="email" />
+
+          <label>Пароль</label>
+          <input v-model="form.password" type="password" />
+
+          <label>Роль</label>
+          <select v-model="form.role">
+            <option value="EMPLOYEE">Сотрудник</option>
+            <option value="MANAGER">Менеджер</option>
+          </select>
+
+          <label>Отдел</label>
+          <select v-model="form.department">
+            <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
+          </select>
+
+          <div class="modal-actions">
+            <button class="btn-details" @click="createUser">Создать</button>
+            <button class="btn-cancel" @click="showCreateModal = false">Отменить</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -47,6 +82,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
 
@@ -57,6 +93,14 @@ const employees = ref([
 
 const departments = ['Разработка', 'Маркетинг', 'Продажи']
 const departmentFilter = ref('')
+const showCreateModal = ref(false)
+const form = ref({
+  name: '',
+  email: '',
+  password: '',
+  role: 'EMPLOYEE',
+  department: ''
+})
 
 const filteredEmployees = computed(() => {
   if (!departmentFilter.value) return employees.value
@@ -65,6 +109,19 @@ const filteredEmployees = computed(() => {
 
 const viewDetails = (employeeId) => {
   router.push(`/employee/${employeeId}`)
+}
+
+const createUser = async () => {
+  try {
+    await axios.post(`${process.env.VUE_APP_BACKEND_API_URL}/users`, form.value)
+    alert('Пользователь создан')
+    showCreateModal.value = false
+    // Обновляем список сотрудников
+    const response = await axios.get(`${process.env.VUE_APP_BACKEND_API_URL}/employees`)
+    employees.value = response.data
+  } catch (e) {
+    alert('Ошибка создания пользователя: ' + (e.response?.data?.detail || e.response?.data?.error || e.message))
+  }
 }
 </script>
 
@@ -88,10 +145,22 @@ const viewDetails = (employeeId) => {
   border: 1px solid rgba(243, 238, 232, 0.1);
 }
 
-.employee-list h2 {
-  font-weight: 600;
-  margin-bottom: 30px;
-  color: rgba(243, 238, 232, 1);
+.employee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-add {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .filters {
@@ -156,6 +225,50 @@ th {
 }
 
 .btn-details:hover {
-  background-color: #1565c0;
+  background-color: #4CAF50;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal {
+  background: #2a2e35;
+  padding: 30px;
+  border-radius: 12px;
+  color: white;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal input, .modal select {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background: #444;
+  color: white;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  background-color: rgba(131, 21, 21, 1);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 </style>
