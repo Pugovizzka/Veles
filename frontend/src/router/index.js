@@ -10,6 +10,7 @@ import LoginView from '../views/LoginView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import EmployeesView from '../views/EmployeesView.vue'
 import ActivityView from '../views/ActivityView.vue'
+import ActivityStatsView from '../views/ActivityStatusView.vue'
 import ReportsView from '../views/ReportsView.vue'
 
 // Components (для вложенного отображения в dashboard)
@@ -51,6 +52,15 @@ const routes = [
         component: ActivityView,
         meta: { 
           title: 'Активность'
+        }
+      },
+      {
+        path: 'activity-stats',
+        name: 'activity-stats',
+        component: ActivityStatsView,
+        meta: { 
+          title: 'Статистика активности',
+          requiresRole: ['admin', 'manager']
         }
       },
       {

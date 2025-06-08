@@ -17,6 +17,11 @@
               <span v-if="!sidebarCollapsed">Активность</span>
             </router-link>
           </li>
+          <li v-if="isAdminOrManager">
+            <router-link to="/activity-stats" active-class="active-link">
+              <span v-if="!sidebarCollapsed">Статистика</span>
+            </router-link>
+          </li>
           <li>
             <router-link to="/reports" active-class="active-link">
               <span v-if="!sidebarCollapsed">Отчёты</span>
@@ -71,6 +76,8 @@ const title = computed(() => {
       return 'Панель управления'
     case '/activity':
       return 'Активность'
+    case '/activity-stats':
+      return 'Статистика активности'
     case '/reports':
       return 'Отчёты'
     case '/employees':
