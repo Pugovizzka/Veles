@@ -31,17 +31,31 @@ export default {
       try {
         // Простая логика определения роли
         let role = 'employee'
+        let name = 'Пользователь'
+        let department = 'Разработка'
 
         if (email === 'admin@company.com' && password === 'admin123') {
           role = 'admin'
+          name = 'Администратор'
+          department = 'IT'
         } else if (email === 'manager@company.com' && password === 'manager123') {
           role = 'manager'
+          name = 'Менеджер Тестов'
+          department = 'Управление'
+        } else if (email === 'employee@company.com' && password === 'employee123') {
+          role = 'employee'
+          name = 'Сотрудник Тестов'
+          department = 'Разработка'
         }
 
         const user = {
-          email,
           id: Date.now(),
-          role
+          email,
+          name,
+          role,
+          department,
+          created_at: new Date('2024-01-15').toISOString(),
+          updated_at: new Date().toISOString()
         }
 
         // Сохраняем пользователя и роль
@@ -62,6 +76,7 @@ export default {
     async logout({ commit }) {
       localStorage.removeItem('user')
       localStorage.removeItem('userRole')
+      localStorage.removeItem('userSettings')
       commit('SET_USER', null)
       commit('SET_USER_ROLE', null)
     },

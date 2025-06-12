@@ -1,6 +1,6 @@
 <template>
   <div class="activity-view">
-    <h2>Активность сотрудников</h2>
+    <h2></h2>
     <ActivityTracker />
   </div>
 </template>

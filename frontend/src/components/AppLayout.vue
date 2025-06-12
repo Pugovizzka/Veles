@@ -32,15 +32,36 @@
               <span v-if="!sidebarCollapsed">Сотрудники</span>
             </router-link>
           </li>
+          <li>
+            <router-link to="/profile" active-class="active-link">
+              <span v-if="!sidebarCollapsed">Профиль</span>
+            </router-link>
+          </li>
         </ul>
       </nav>
 
       <!-- Кнопка выхода и инфо -->
       <div v-if="!sidebarCollapsed" class="sidebar-footer">
         <div class="user-info-sidebar">
-          <p>{{ user?.email }}</p>
+          <div class="user-avatar-small">
+            {{ user?.name?.charAt(0) || 'U' }}
+          </div>
+          <div class="user-details">
+            <p class="user-name">{{ user?.name || 'Пользователь' }}</p>
+            <p class="user-email">{{ user?.email }}</p>
+          </div>
           <button @click="handleLogout" class="logout-btn">Выйти</button>
         </div>
+      </div>
+      
+      <!-- Компактная версия для collapsed состояния -->
+      <div v-if="sidebarCollapsed" class="sidebar-footer-collapsed">
+        <div class="user-avatar-small">
+          {{ user?.name?.charAt(0) || 'U' }}
+        </div>
+        <button @click="handleLogout" class="logout-btn-small" title="Выйти">
+          🚪
+        </button>
       </div>
     </div>
 
@@ -82,6 +103,8 @@ const title = computed(() => {
       return 'Отчёты'
     case '/employees':
       return 'Сотрудники'
+    case '/profile':
+      return 'Личный кабинет'
     default:
       return ''
   }
@@ -140,21 +163,10 @@ const toggleSidebar = () => {
   transform: scale(1.05);
 }
 
-/* Центровка toggle-btn в режиме collapse */
 .sidebar-collapsed .toggle-btn {
   margin: 0 auto 20px auto;
   padding: 6px 10px;
   display: block;
-}
-
-/* Скрытие текста ссылок в collapsed режиме */
-.sidebar-collapsed nav ul li a {
-  justify-content: center;
-  padding: 10px;
-}
-
-.sidebar-collapsed nav ul li a span {
-  display: none;
 }
 
 nav {
@@ -176,15 +188,28 @@ nav ul li a {
   text-decoration: none;
   display: flex;
   align-items: center;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 12px;
+  border-radius: 8px;
   transition: all 0.3s;
   font-weight: 500;
+}
+
+.sidebar-collapsed nav ul li a {
+  justify-content: center;
+  padding: 12px 8px;
+}
+
+.sidebar-collapsed nav ul li a span {
+  display: none;
 }
 
 nav ul li a:hover {
   background-color: rgba(39, 44, 47, 1);
   transform: translateX(5px);
+}
+
+.sidebar-collapsed nav ul li a:hover {
+  transform: scale(1.1);
 }
 
 .active-link {
@@ -193,28 +218,57 @@ nav ul li a:hover {
   border-left: 3px solid rgba(131, 21, 21, 1);
 }
 
-/* Скрыть футер при collapse */
-.sidebar-collapsed .sidebar-footer {
-  display: none;
-}
-
 .sidebar-footer {
   margin-top: auto;
   padding-top: 20px;
   border-top: 1px solid rgba(243, 238, 232, 0.2);
 }
 
-.user-info-sidebar {
+.sidebar-footer-collapsed {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(243, 238, 232, 0.2);
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
 }
 
-.user-info-sidebar p {
-  color: rgba(243, 238, 232, 0.8);
-  margin: 0;
-  font-weight: 500;
+.user-info-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.user-avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(131, 21, 21, 1), rgba(151, 31, 31, 1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: rgba(243, 238, 232, 1);
+  margin: 0 auto;
+}
+
+.user-details {
+  text-align: center;
+}
+
+.user-name {
+  color: rgba(243, 238, 232, 1);
+  margin: 0 0 5px 0;
+  font-weight: 600;
   font-size: 14px;
+}
+
+.user-email {
+  color: rgba(243, 238, 232, 0.7);
+  margin: 0;
+  font-size: 12px;
   word-break: break-word;
 }
 
@@ -229,12 +283,29 @@ nav ul li a:hover {
   font-family: 'Gabarito', sans-serif;
   font-weight: 500;
   font-size: 14px;
+  width: 100%;
 }
 
 .logout-btn:hover {
   background-color: rgba(151, 31, 31, 1);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.logout-btn-small {
+  padding: 8px;
+  background-color: rgba(131, 21, 21, 1);
+  color: rgba(243, 238, 232, 1);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.logout-btn-small:hover {
+  background-color: rgba(151, 31, 31, 1);
+  transform: scale(1.1);
 }
 
 .main-content {
@@ -264,5 +335,26 @@ nav ul li a:hover {
   color: rgba(243, 238, 232, 1);
   font-weight: 600;
   margin: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  
+  .sidebar-collapsed {
+    width: 100%;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .expanded {
+    margin-left: 0;
+  }
 }
 </style>
